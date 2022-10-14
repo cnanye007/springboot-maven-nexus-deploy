@@ -1,7 +1,6 @@
 pipeline{
     tools { 
-        maven 'maven'
-       
+        maven 'maven'    
     }
     agent {
         label 'master'
@@ -17,5 +16,16 @@ pipeline{
                    sh 'mvn clean package'
                 }
             }
+           stage('junit test') {
+             steps{
+                junit 'springboot-maven-course-micro-svc/target/surefire-reports/*.xml'
+           }
+
         }
+        stage('code coverage') {
+           steps{
+              step( [ $class: 'JacocoPublisher' ] ) 
+           }
+        }    
+   }
 }

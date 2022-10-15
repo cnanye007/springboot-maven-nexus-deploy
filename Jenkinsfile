@@ -1,4 +1,31 @@
 pipeline{
+    agent any
+       tools {
+          maven 'maven'
+       }
+    stages{
+       stage ('Github checkout'){ 
+         steps { git branch: 'main', credentialsId: 'Jenkins_github_access_token', url: 'https://github.com/cnanye007/springboot-maven-nexus-deploy.git'
+        }      
+    }
+        stage('Mavenbuild'){
+           steps{ 
+           sh 'mvn clean install'
+        }
+     }
+        stage('junit test') {
+           steps{
+               junit (allowEmptyResults: true, skipPublishingChecks: true, testResults: 'target/surefire-reports/*.xml')
+          }
+        }
+        stage('code coverage') {
+           steps{
+              step( [ $class: 'JacocoPublisher' ] ) 
+           }
+        }   
+   }
+}
+/*pipeline{
     tools { 
         maven 'maven'    
     }
@@ -33,4 +60,5 @@ pipeline{
            }
         }    
    }
-}
+}*/
+
